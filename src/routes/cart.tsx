@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
+import { formatNaira, FREE_SHIPPING_THRESHOLD, FLAT_SHIPPING } from "../lib/currency";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — L'AURA" }, { name: "robots", content: "noindex" }] }),
@@ -12,7 +13,7 @@ function Cart() {
   const [coupon, setCoupon] = useState("");
   const [applied, setApplied] = useState(0);
 
-  const shipping = items.length === 0 ? 0 : subtotal > 100 ? 0 : 12;
+  const shipping = items.length === 0 ? 0 : subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
   const total = Math.max(0, subtotal - applied) + shipping;
 
   const apply = () => {
@@ -51,7 +52,7 @@ function Cart() {
                 <Link to="/shop/$productId" params={{ productId: it.productId }} className="font-serif text-xl italic hover:text-accent">
                   {it.name}
                 </Link>
-                <p className="mt-1 font-mono text-xs text-muted-foreground">${it.price}</p>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">{formatNaira(it.price)}</p>
                 <button
                   onClick={() => remove(it.productId)}
                   className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-destructive"
@@ -67,7 +68,7 @@ function Cart() {
                 </div>
               </div>
               <div className="col-span-6 md:col-span-2 flex items-center justify-end font-mono text-sm">
-                ${(it.price * it.quantity).toFixed(2)}
+                {formatNaira(it.price * it.quantity)}
               </div>
             </li>
           ))}
@@ -80,12 +81,12 @@ function Cart() {
       <aside className="lg:col-span-1">
         <div className="border border-border p-8">
           <p className="mb-6 text-[10px] uppercase tracking-widest text-muted-foreground">Summary</p>
-          <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-          {applied > 0 && <Row label="Discount" value={`− $${applied.toFixed(2)}`} />}
-          <Row label="Shipping" value={shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`} />
+          <Row label="Subtotal" value={formatNaira(subtotal)} />
+          {applied > 0 && <Row label="Discount" value={`− ${formatNaira(applied)}`} />}
+          <Row label="Shipping" value={shipping === 0 ? "Free" : formatNaira(shipping)} />
           <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
             <span className="text-[10px] uppercase tracking-widest">Total</span>
-            <span className="font-mono text-lg">${total.toFixed(2)}</span>
+            <span className="font-mono text-lg">{formatNaira(total)}</span>
           </div>
 
           <div className="mt-8">

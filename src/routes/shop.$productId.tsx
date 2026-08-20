@@ -3,6 +3,7 @@ import { useState } from "react";
 import { productById, products } from "../lib/products";
 import { ProductCard } from "../components/product-card";
 import { useCart } from "../lib/cart";
+import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/shop/$productId")({
   loader: ({ params }) => {
@@ -64,7 +65,7 @@ function ProductPage() {
           <p className="mb-6 text-muted-foreground italic">{product.tagline}</p>
 
           <div className="mb-8 flex items-center gap-4">
-            <span className="font-mono text-xl">${product.price}</span>
+            <span className="font-mono text-xl">{formatNaira(product.price)}</span>
             <span className="text-accent">★★★★★</span>
             <span className="text-[11px] text-muted-foreground">({product.reviews} reviews)</span>
           </div>

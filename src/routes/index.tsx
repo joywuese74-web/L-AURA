@@ -2,21 +2,21 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { products } from "../lib/products";
 import { services, categoryMeta } from "../lib/services";
 import { ProductCard } from "../components/product-card";
+import galleryBraids from "../assets/gallery-braids.jpg";
+import galleryNails from "../assets/gallery-nails.jpg";
+import heroImage from "../assets/hero-portrait.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const heroImage =
-  "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=2000&q=80";
-
 const bookingImage =
   "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1400&q=80";
 
 const galleryPreviews = [
-  "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+  galleryBraids,
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80",
+  galleryNails,
   "https://images.unsplash.com/photo-1591019479261-1a103585c559?auto=format&fit=crop&w=800&q=80",
 ];
 

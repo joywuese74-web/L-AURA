@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { Product } from "../lib/products";
+import { formatNaira } from "../lib/currency";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
@@ -21,7 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
           <h4 className="text-sm font-medium">{product.name}</h4>
           <p className="text-[11px] italic text-muted-foreground">{product.tagline}</p>
         </div>
-        <span className="font-mono text-xs">${product.price}</span>
+        <span className="font-mono text-xs">{formatNaira(product.price)}</span>
       </div>
       <div className="mt-3 flex items-center gap-2">
         <span className="text-[9px] text-accent">★★★★★</span>

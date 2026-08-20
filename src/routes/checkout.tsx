@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
+import { formatNaira, FREE_SHIPPING_THRESHOLD, FLAT_SHIPPING } from "../lib/currency";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — L'AURA" }, { name: "robots", content: "noindex" }] }),
@@ -12,7 +13,7 @@ function Checkout() {
   const navigate = useNavigate();
   const [placed, setPlaced] = useState<{ orderId: string; email: string } | null>(null);
 
-  const shipping = items.length === 0 ? 0 : subtotal > 100 ? 0 : 12;
+  const shipping = items.length === 0 ? 0 : subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
   const total = subtotal + shipping;
 
   if (items.length === 0 && !placed) {
@@ -111,15 +112,15 @@ function Checkout() {
                     <p className="text-sm">{it.name}</p>
                     <p className="font-mono text-[10px] text-muted-foreground">Qty {it.quantity}</p>
                   </div>
-                  <span className="font-mono text-sm">${(it.price * it.quantity).toFixed(2)}</span>
+                  <span className="font-mono text-sm">{formatNaira(it.price * it.quantity)}</span>
                 </li>
               ))}
             </ul>
-            <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-            <Row label="Shipping" value={shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`} />
+            <Row label="Subtotal" value={formatNaira(subtotal)} />
+            <Row label="Shipping" value={shipping === 0 ? "Free" : formatNaira(shipping)} />
             <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
               <span className="text-[10px] uppercase tracking-widest">Total</span>
-              <span className="font-mono text-lg">${total.toFixed(2)}</span>
+              <span className="font-mono text-lg">{formatNaira(total)}</span>
             </div>
             <button
               type="submit"
