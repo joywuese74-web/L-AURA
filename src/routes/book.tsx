@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
 import { services, serviceById, type Service } from "../lib/services";
 import { staff, staffFor, type Staff } from "../lib/staff";
+import { formatNaira } from "../lib/currency";
 
 const searchSchema = z.object({
   service: z.string().optional(),
@@ -134,7 +135,7 @@ function Book() {
           <Row label="Date" value={new Date(confirmed.date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} />
           <Row label="Time" value={confirmed.time} />
           <Row label="With" value={confirmed.staffName} />
-          <Row label="Total" value={`$${confirmed.price}`} />
+          <Row label="Total" value={formatNaira(confirmed.price)} />
         </div>
         <div className="mt-10 flex justify-center gap-4">
           <button
@@ -231,7 +232,7 @@ function Book() {
                       </p>
                       <h3 className="font-serif text-xl italic">{s.name}</h3>
                     </div>
-                    <span className="font-mono text-sm">${s.price}</span>
+                    <span className="font-mono text-sm">{formatNaira(s.price)}</span>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {s.duration} min — {s.description}
@@ -380,7 +381,7 @@ function Book() {
             <Row label="With" value={selectedStaff.name} />
             <div className="mt-6 flex items-center justify-between border-t border-border pt-6">
               <span className="text-[10px] uppercase tracking-widest">Total</span>
-              <span className="font-mono text-lg">${selectedService.price}</span>
+              <span className="font-mono text-lg">{formatNaira(selectedService.price)}</span>
             </div>
           </div>
         </div>

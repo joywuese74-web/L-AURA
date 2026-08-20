@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { services, categoryMeta, type Service } from "../lib/services";
+import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -61,7 +62,7 @@ function Services() {
                         {s.duration} min
                       </div>
                       <div className="col-span-6 md:col-span-2 flex items-center font-mono text-sm">
-                        ${s.price}
+                        {formatNaira(s.price)}
                       </div>
                       <div className="col-span-12 md:col-span-1 flex items-center justify-end">
                         <Link
