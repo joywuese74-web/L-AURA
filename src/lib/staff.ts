@@ -1,4 +1,6 @@
 import type { Service } from "./services";
+import adaeze from "../assets/staff-adaeze.jpg";
+import ngozi from "../assets/staff-ngozi.jpg";
 
 export type Staff = {
   id: string;
@@ -24,11 +26,18 @@ export const staff: Staff[] = [
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
   },
   {
-    id: "sarah",
-    name: "Sarah Okonkwo",
+    id: "ngozi",
+    name: "Ngozi Okonkwo",
     role: "Nail Artist",
     specialties: ["Nails"],
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    image: ngozi,
+  },
+  {
+    id: "adaeze",
+    name: "Adaeze Balogun",
+    role: "Senior Aesthetician",
+    specialties: ["Skincare", "Treatments"],
+    image: adaeze,
   },
   {
     id: "amara",

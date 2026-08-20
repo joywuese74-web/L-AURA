@@ -1,4 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import galleryBraids from "../assets/gallery-braids.jpg";
+import galleryNails from "../assets/gallery-nails.jpg";
+import heroPortrait from "../assets/hero-portrait.jpg";
+import staffAdaeze from "../assets/staff-adaeze.jpg";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -13,6 +17,10 @@ export const Route = createFileRoute("/gallery")({
 });
 
 const images = [
+  heroPortrait,
+  galleryBraids,
+  galleryNails,
+  staffAdaeze,
   "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1200&q=80",
   "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=80",
   "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1200&q=80",
