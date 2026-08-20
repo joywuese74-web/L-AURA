@@ -4,12 +4,11 @@ import { services, categoryMeta } from "../lib/services";
 import { ProductCard } from "../components/product-card";
 import galleryBraids from "../assets/gallery-braids.jpg";
 import galleryNails from "../assets/gallery-nails.jpg";
+import heroImage from "../assets/hero-portrait.jpg";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
-
-import heroImage from "../assets/hero-portrait.jpg";
 
 const bookingImage =
   "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1400&q=80";
