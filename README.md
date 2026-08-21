@@ -2,31 +2,19 @@
 
 Based on my requirements, the website would combine an e-commerce store, a beauty salon booking system, and a business portfolio into one modern platform. The design would follow the luxury, minimal aesthetic of the Dribbble template you referenced, with soft colors, elegant typography, rounded cards, and high-quality imagery.
 
-Homepage Overview
+## Homepage Overview
 
 The homepage would immediately communicate the brand and guide visitors toward shopping or booking.
 
-
-
-
-
-
-
-
-
-
-
-
-
-Hero Section
+### Hero Section
 
 The first screen visitors see.
 
-Left Side
+**Left Side**
 
 Large headline:
 
-Reveal Your Natural Beauty
+**Reveal Your Natural Beauty**
 
 Short description:
 
@@ -34,294 +22,221 @@ Premium skincare, luxury beauty treatments, and professional salon services desi
 
 Buttons:
 
-Shop Products
+**Shop Products**
 
-Book Appointment
+**Book Appointment**
 
-Right Side
+**Right Side**
 
 Large elegant image of:
 
-skincare products
+* skincare products
+* smiling customer
+* beauty therapist at work
 
-smiling customer
-
-beauty therapist at work
-
-Navigation Bar
+### Navigation Bar
 
 Simple navigation similar to premium cosmetic brands.
 
-Logo
+**Logo**
 
-Home
-Shop
-Services
-Book Appointment
-Gallery
-About Us
-Testimonials
-Contact
+Home | Shop | Services | Book Appointment | Gallery | About Us | Testimonials | Contact
 
-Search
-Cart
-Login / Register
+Search | Cart | Login / Register
 
-
-Featured Categories
+## Featured Categories
 
 Customers immediately see what the business offers.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Each card represents a service.
 
-Skincare Products
+### Skincare Products
 
-Moisturizers
+* Moisturizers
+* Cleansers
+* Sunscreen
+* Serums
+* Body care
 
-Cleansers
-
-Sunscreen
-
-Serums
-
-Body care
-
-Button:
+**Button:**
 
 Shop Now
 
-Skin Care Treatments
+### Skin Care Treatments
 
 Examples:
 
-Acne Treatment
+* Acne Treatment
+* Facial
+* Chemical Peel
+* Hydrating Facial
+* Skin Consultation
 
-Facial
-
-Chemical Peel
-
-Hydrating Facial
-
-Skin Consultation
-
-Button:
+**Button:**
 
 Book Treatment
 
-Massage
+### Massage
 
-Swedish Massage
+* Swedish Massage
+* Deep Tissue
+* Aromatherapy
+* Hot Stone
 
-Deep Tissue
-
-Aromatherapy
-
-Hot Stone
-
-Button:
+**Button:**
 
 Reserve Session
 
-Nails
+### Nails
 
-Manicure
+* Manicure
+* Pedicure
+* Gel Polish
+* Nail Care
 
-Pedicure
-
-Gel Polish
-
-Nail Care
-
-Button:
+**Button:**
 
 Book Now
 
-Hair Studio
+### Hair Studio
 
-Male
+**Male**
 
-Haircut
+* Haircut
+* Beard Grooming
 
-Beard Grooming
+**Female**
 
-Female
+* Hair Styling
+* Braiding
+* Wig Installation
+* Coloring
+* Relaxing
 
-Hair Styling
-
-Braiding
-
-Wig Installation
-
-Coloring
-
-Relaxing
-
-Button
+**Button:**
 
 Book Hair Service
 
-Online Beauty Store
+## Online Beauty Store
 
 This becomes a complete online shop.
 
-Example products:
+### Example Products:
 
-Vitamin C Serum
+**Vitamin C Serum**
 
-$35
-
-★★★★★
-
-Add to Cart
-
-
-Body Lotion
-
-$22
+**₦47,200**
 
 ★★★★★
 
 Add to Cart
 
+**Body Lotion**
 
-Face Cleanser
-
-$18
+**₦29,700**
 
 ★★★★★
 
 Add to Cart
 
+**Face Cleanser**
+
+**₦24,300**
+
+★★★★★
+
+Add to Cart
 
 Each product includes:
 
-Product image
+* Product image
+* Price
+* Reviews
+* Quantity
+* Add to Cart
+* Wishlist
 
-Price
-
-Reviews
-
-Quantity
-
-Add to Cart
-
-Wishlist
-
-Product Page
+## Product Page
 
 When customers click a product they see:
 
-Large Product Images
+* Large Product Images
+* Description
+* Ingredients
+* Directions
+* Reviews
+* Related Products
 
-Description
-
-Ingredients
-
-Directions
-
-Reviews
-
-Related Products
-
-Buttons
+**Buttons**
 
 Add to Cart
 
 Buy Now
 
-Shopping Cart
+## Shopping Cart
 
-Customers can
+Customers can:
 
-Increase quantity
+* Increase quantity
+* Remove products
+* Apply coupon
+* Estimate shipping
 
-Remove products
+**Summary**
 
-Apply coupon
+* Subtotal
+* Shipping
+* Discount
+* Total
 
-Estimate shipping
+**Proceed to Checkout**
 
-Summary
+## Checkout
 
-Subtotal
+Customer enters:
 
-Shipping
+* Name
+* Email
+* Phone
+* Address
 
-Discount
+### Payment
 
-Total
+* Card
+* Bank Transfer
+* Mobile Money (if supported)
+* Paystack/Flutterwave integration for Nigeria
 
+### After payment
 
-Proceed to Checkout
+* Order Confirmation
+* Email Receipt
 
-Checkout
-
-Customer enters
-
-Name
-
-Email
-
-Phone
-
-Address
-
-Payment
-
-Card
-
-Bank Transfer
-
-Mobile Money (if supported)
-
-Paystack/Flutterwave integration for Nigeria
-
-After payment
-
-Order Confirmation
-
-Email Receipt
-
-Booking System
+## Booking System
 
 One of the biggest features.
 
-Customer selects
+Customer selects:
 
-Service
-
-↓
-
-Date
+**Service**
 
 ↓
 
-Time
+**Date**
 
 ↓
 
-Staff
+**Time**
 
 ↓
 
-Confirm Booking
+**Staff**
 
+↓
 
-Example
+**Confirm Booking**
+
+### Example
 
 Hair Styling
 
@@ -343,117 +258,89 @@ Book Appointment
 
 The salon receives the booking instantly.
 
-Walk-In Customer Management (Admin)
+## Walk-In Customer Management (Admin)
 
 Staff dashboard includes:
 
-Today's appointments
-
-Walk-in queue
-
-Completed services
-
-Cancelled bookings
-
-Available staff
+* Today's appointments
+* Walk-in queue
+* Completed services
+* Cancelled bookings
+* Available staff
 
 This lets the salon serve both walk-in and online customers efficiently.
 
-Customer Dashboard
+## Customer Dashboard
 
 Customers can:
 
-View appointments
+* View appointments
+* Cancel bookings
+* Reschedule
+* View order history
+* Track orders
+* Save favorite products
+* Manage profile
 
-Cancel bookings
-
-Reschedule
-
-View order history
-
-Track orders
-
-Save favorite products
-
-Manage profile
-
-Admin Dashboard
+## Admin Dashboard
 
 The owner manages everything from one place.
 
-Products
+### Products
 
-Add Product
+* Add Product
+* Edit Product
+* Delete Product
+* Upload Images
+* Manage Inventory
 
-Edit Product
+### Orders
 
-Delete Product
+See:
 
-Upload Images
+* Pending
+* Processing
+* Delivered
+* Cancelled
 
-Manage Inventory
+### Services
 
-Orders
+Manage:
 
-See
+* Hair
+* Massage
+* Nails
+* Facial
 
-Pending
+### Staff
 
-Processing
+Add:
 
-Delivered
-
-Cancelled
-
-Services
-
-Manage
-
-Hair
-
-Massage
-
-Nails
-
-Facial
-
-Staff
-
-Add
-
-Beauticians
-
-Hair Stylists
-
-Massage Therapists
+* Beauticians
+* Hair Stylists
+* Massage Therapists
 
 Assign appointments automatically.
 
-Appointment Calendar
+### Appointment Calendar
 
-Daily
-
-Weekly
-
-Monthly
+* Daily
+* Weekly
+* Monthly
 
 Calendar view.
 
-Analytics
+### Analytics
 
-Dashboard shows
+Dashboard shows:
 
-Sales
+* Sales
+* Revenue
+* Popular products
+* Most booked services
+* Returning customers
 
-Revenue
-
-Popular products
-
-Most booked services
-
-Returning customers
-
-Testimonials
+## Testimonials
 
 Happy customer reviews with ratings.
 
@@ -463,114 +350,102 @@ Happy customer reviews with ratings.
 
 — Grace A.
 
+## Gallery
 
-Gallery
+Professional photos of:
 
-Professional photos of
-
-Hair transformations
-
-Nails
-
-Massage rooms
-
-Facial sessions
-
-Products
+* Hair transformations
+* Nails
+* Massage rooms
+* Facial sessions
+* Products
 
 This builds trust.
 
-About Us
+## About Us
 
 Tell the salon's story.
 
-Mission
+* Mission
+* Vision
+* Meet the Team
+* Years of Experience
+* Professional Certifications
 
-Vision
+## Contact
 
-Meet the Team
+Includes:
 
-Years of Experience
+* Google Map
+* Address
+* Phone Number
+* Email
+* WhatsApp button
+* Opening Hours
 
-Professional Certifications
+## Footer
 
-Contact
+* Quick Links
+* Services
+* Shop
+* Privacy Policy
+* Terms
+* Instagram
+* Facebook
+* TikTok
+* Newsletter Subscription
 
-Includes
-
-Google Map
-
-Address
-
-Phone Number
-
-Email
-
-WhatsApp button
-
-Opening Hours
-
-Footer
-
-Quick Links
-
-Services
-
-Shop
-
-Privacy Policy
-
-Terms
-
-Instagram
-
-Facebook
-
-TikTok
-
-Newsletter Subscription
-
-
-Technology Stack
+## Technology Stack
 
 For a modern, scalable implementation, I would recommend:
 
-LayerTechnologyFrontendNext.js + React + TypeScriptStylingTailwind CSS + Framer MotionBackendNode.js (Express) or Next.js API RoutesDatabasePostgreSQLAuthenticationClerk or Auth.jsPaymentsPaystack + Flutterwave (Nigeria), Stripe (optional)BookingCalendar-based appointment system with email confirmationsFile StorageCloudinaryDeploymentVercel (frontend) + Railway or Render (backend/database)
+| Layer          | Technology                                                 |
+| -------------- | ---------------------------------------------------------- |
+| Frontend       | Next.js + React + TypeScript                               |
+| Styling        | Tailwind CSS + Framer Motion                               |
+| Backend        | Node.js (Express) or Next.js API Routes                    |
+| Database       | PostgreSQL                                                 |
+| Authentication | Clerk or Auth.js                                           |
+| Payments       | Paystack + Flutterwave (Nigeria), Stripe (optional)        |
+| Booking        | Calendar-based appointment system with email confirmations |
+| File Storage   | Cloudinary                                                 |
+| Deployment     | Vercel (frontend) + Railway or Render (backend/database)   |
 
-Overall User Journey
+## Overall User Journey
 
 Visitor
-   │
-   ▼
-Homepage
-   │
-   ├── Shop Products ──► Product Details ──► Cart ──► Checkout ──► Order Confirmation
-   │
-   └── Book Service ──► Select Service ──► Choose Date & Time ──► Confirm Appointment
-                                             │
-                                             ▼
-                                    Salon Admin Dashboard
-                                             │
-                          Walk-in Customers + Online Bookings Managed Together
 
+↓
+
+Homepage
+
+├── Shop Products ──► Product Details ──► Cart ──► Checkout ──► Order Confirmation
+
+└── Book Service ──► Select Service ──► Choose Date & Time ──► Confirm Appointment
+
+↓
+
+Salon Admin Dashboard
+
+Walk-in Customers + Online Bookings Managed Together
 
 The final result would feel like a premium beauty brand website—similar in polish to brands such as Sephora or Dermstore—but customized for "Skincare and Aesthetics". It would seamlessly support retail product sales, service bookings, secure online payments, and in-store operations, allowing the business to serve both walk-in clients and online customers through a single integrated platform.
 
-This project was built with [Lovable](https://lovable.dev).
+This project was built with Lovable.
 
-**Live app**: https://petal-and-polish-pro.lovable.app
+**Live app:** https://petal-and-polish-pro.lovable.app
 
 ## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a5ad750b-64ea-4727-9d95-4a2c70e2c7a9).
+Continue developing this project in the Lovable editor.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+* **Ship faster:** describe what you want to build and Lovable handles the code.
+* **Stay in sync:** every change made in Lovable is committed straight to this repository.
+* **Full ownership:** this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Prefer working locally? You need Node.js and npm — install with nvm.
 
 ```sh
 git clone <this-repository-url>
