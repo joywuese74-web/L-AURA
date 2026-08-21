@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
-import { formatNaira, FREE_SHIPPING_THRESHOLD, FLAT_SHIPPING } from "../lib/currency";
+import { api, quoteCart, ApiError, type Order, type OrderRequest } from "../lib/api";
+import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — L'AURA" }, { name: "robots", content: "noindex" }] }),
@@ -9,12 +10,13 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Checkout() {
-  const { items, subtotal, clear } = useCart();
+  const { items, lines, coupon, clear } = useCart();
   const navigate = useNavigate();
-  const [placed, setPlaced] = useState<{ orderId: string; email: string } | null>(null);
+  const [placed, setPlaced] = useState<{ order: Order; email: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const shipping = items.length === 0 ? 0 : subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
-  const total = subtotal + shipping;
+  const quote = quoteCart(items, coupon);
 
   if (items.length === 0 && !placed) {
     return (
@@ -33,7 +35,7 @@ function Checkout() {
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-accent">Order placed</p>
         <h1 className="mb-6 font-serif text-5xl italic">Thank you.</h1>
         <p className="mb-2 text-muted-foreground">
-          Your order <span className="font-mono text-foreground">{placed.orderId}</span> has been received.
+          Your order <span className="font-mono text-foreground">{placed.order.id}</span> has been received.
         </p>
         <p className="mb-10 text-muted-foreground">
           A confirmation has been sent to <span className="text-foreground">{placed.email}</span>.
@@ -48,14 +50,42 @@ function Checkout() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") ?? "");
-    const orderId = `AUR-${Date.now().toString(36).toUpperCase()}`;
-    clear();
-    setPlaced({ orderId, email });
-    window.scrollTo({ top: 0 });
+
+    const request: OrderRequest = {
+      customer: {
+        name: String(form.get("name") ?? ""),
+        email,
+        phone: String(form.get("phone") ?? ""),
+      },
+      shipping: {
+        address: String(form.get("address") ?? ""),
+        city: String(form.get("city") ?? ""),
+        postalCode: String(form.get("postal") ?? ""),
+        country: String(form.get("country") ?? ""),
+      },
+      lines,
+      ...(coupon ? { couponCode: coupon } : {}),
+      paymentMethod: (String(form.get("payment") ?? "card") as OrderRequest["paymentMethod"]),
+    };
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      const order = await api.createOrder(request);
+      clear();
+      setPlaced({ order, email });
+      window.scrollTo({ top: 0 });
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "We couldn't place your order. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -86,9 +116,13 @@ function Checkout() {
 
           <Section title="Payment">
             <div className="space-y-3">
-              {["Credit / Debit Card", "Bank Transfer", "Mobile Money"].map((p, i) => (
+              {([
+                ["Credit / Debit Card", "card"],
+                ["Bank Transfer", "bank_transfer"],
+                ["Mobile Money", "mobile_money"],
+              ] as const).map(([p, value], i) => (
                 <label key={p} className="flex cursor-pointer items-center gap-4 border border-border p-4 has-[:checked]:border-foreground">
-                  <input type="radio" name="payment" defaultChecked={i === 0} className="accent-foreground" />
+                  <input type="radio" name="payment" value={value} defaultChecked={i === 0} className="accent-foreground" />
                   <span className="text-sm">{p}</span>
                 </label>
               ))}
@@ -116,17 +150,20 @@ function Checkout() {
                 </li>
               ))}
             </ul>
-            <Row label="Subtotal" value={formatNaira(subtotal)} />
-            <Row label="Shipping" value={shipping === 0 ? "Free" : formatNaira(shipping)} />
+            <Row label="Subtotal" value={formatNaira(quote.subtotal)} />
+            {quote.discount > 0 && <Row label="Discount" value={`− ${formatNaira(quote.discount)}`} />}
+            <Row label="Shipping" value={quote.shipping === 0 ? "Free" : formatNaira(quote.shipping)} />
             <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
               <span className="text-[10px] uppercase tracking-widest">Total</span>
-              <span className="font-mono text-lg">{formatNaira(total)}</span>
+              <span className="font-mono text-lg">{formatNaira(quote.total)}</span>
             </div>
+            {error && <p className="mt-6 text-xs text-destructive">{error}</p>}
             <button
               type="submit"
-              className="mt-8 w-full bg-foreground px-8 py-4 text-[10px] uppercase tracking-widest text-background hover:bg-accent"
+              disabled={submitting}
+              className="mt-8 w-full bg-foreground px-8 py-4 text-[10px] uppercase tracking-widest text-background disabled:opacity-50 hover:enabled:bg-accent"
             >
-              Place order
+              {submitting ? "Placing order…" : "Place order"}
             </button>
             <button
               type="button"

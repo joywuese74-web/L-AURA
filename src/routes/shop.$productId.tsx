@@ -1,14 +1,18 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { productById, products } from "../lib/products";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { productQuery, productsQuery } from "../lib/api";
 import { ProductCard } from "../components/product-card";
 import { useCart } from "../lib/cart";
 import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/shop/$productId")({
-  loader: ({ params }) => {
-    const product = productById(params.productId);
+  loader: async ({ context, params }) => {
+    const product = await context.queryClient.ensureQueryData(
+      productQuery(params.productId),
+    );
     if (!product) throw notFound();
+    await context.queryClient.ensureQueryData(productsQuery());
     return { product };
   },
   head: ({ loaderData }) => ({
@@ -40,6 +44,7 @@ function ProductPage() {
   const { add } = useCart();
   const navigate = useNavigate();
 
+  const { data: products } = useSuspenseQuery(productsQuery());
   const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
 
   const handleAdd = () => {

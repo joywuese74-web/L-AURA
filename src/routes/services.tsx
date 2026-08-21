@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { services, categoryMeta, type Service } from "../lib/services";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { categoryMeta } from "../lib/services";
+import { servicesQuery, type Service } from "../lib/api";
 import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/services")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(servicesQuery()),
   head: () => ({
     meta: [
       { title: "Services — L'AURA" },
@@ -17,6 +20,8 @@ export const Route = createFileRoute("/services")({
 const categoryOrder: Service["category"][] = ["Skincare", "Treatments", "Massage", "Nails", "Hair"];
 
 function Services() {
+  const { data: services } = useSuspenseQuery(servicesQuery());
+
   return (
     <div>
       <section className="mx-auto max-w-7xl px-6 py-16">
