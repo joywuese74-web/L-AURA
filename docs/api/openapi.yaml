@@ -1,0 +1,319 @@
+openapi: 3.1.0
+info:
+  title: L'AURA Platform API
+  version: 1.0.0
+  description: >
+    Contract the frontend consumes through src/lib/api. Implement these nine
+    endpoints in Python (FastAPI) or Go and set VITE_API_BASE_URL to the base
+    URL — no UI changes required. All money amounts are integer NGN.
+servers:
+  - url: http://localhost:8000
+    description: Local backend
+paths:
+  /v1/products:
+    get:
+      summary: List products
+      parameters:
+        - name: category
+          in: query
+          schema: { $ref: "#/components/schemas/ProductCategory" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Product" }
+  /v1/products/{id}:
+    get:
+      summary: Get one product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+        "404": { $ref: "#/components/responses/Error" }
+  /v1/services:
+    get:
+      summary: List services
+      parameters:
+        - name: category
+          in: query
+          schema: { $ref: "#/components/schemas/ServiceCategory" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Service" }
+  /v1/staff:
+    get:
+      summary: List specialists
+      parameters:
+        - name: specialty
+          in: query
+          schema: { $ref: "#/components/schemas/ServiceCategory" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Staff" }
+  /v1/availability:
+    get:
+      summary: Bookable time slots for a service/date (optionally a specialist)
+      parameters:
+        - name: service_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: staff_id
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/TimeSlot" }
+  /v1/cart/quote:
+    post:
+      summary: Authoritative cart pricing (subtotal, coupon, shipping, total)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CartQuoteRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartQuote" }
+  /v1/orders:
+    post:
+      summary: Place an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OrderRequest" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Order" }
+        "422": { $ref: "#/components/responses/Error" }
+  /v1/bookings:
+    get:
+      summary: List bookings for a customer email
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema: { type: string, format: email }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Booking" }
+    post:
+      summary: Create a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BookingRequest" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Booking" }
+        "409": { $ref: "#/components/responses/Error" }
+components:
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error: { type: string, example: slot_taken }
+        message: { type: string }
+        details: {}
+    ProductCategory:
+      type: string
+      enum: [Serums, Cleansers, Moisturizers, Sunscreen, Body]
+    ServiceCategory:
+      type: string
+      enum: [Skincare, Massage, Nails, Hair, Treatments]
+    Product:
+      type: object
+      required:
+        [id, name, tagline, price, rating, review_count, category, image_url, gallery_urls, description, ingredients, directions]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        tagline: { type: string }
+        price: { type: integer, description: NGN }
+        rating: { type: number }
+        review_count: { type: integer }
+        category: { $ref: "#/components/schemas/ProductCategory" }
+        image_url: { type: string, format: uri }
+        gallery_urls:
+          type: array
+          items: { type: string, format: uri }
+        description: { type: string }
+        ingredients:
+          type: array
+          items: { type: string }
+        directions: { type: string }
+    Service:
+      type: object
+      required: [id, name, category, duration_minutes, price, description]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        category: { $ref: "#/components/schemas/ServiceCategory" }
+        duration_minutes: { type: integer }
+        price: { type: integer }
+        description: { type: string }
+    Staff:
+      type: object
+      required: [id, name, role, specialties, image_url]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        role: { type: string }
+        specialties:
+          type: array
+          items: { $ref: "#/components/schemas/ServiceCategory" }
+        image_url: { type: string, format: uri }
+    TimeSlot:
+      type: object
+      required: [time, available]
+      properties:
+        time: { type: string, pattern: "^[0-2][0-9]:[0-5][0-9]$" }
+        available: { type: boolean }
+    CartLine:
+      type: object
+      required: [product_id, quantity]
+      properties:
+        product_id: { type: string }
+        quantity: { type: integer, minimum: 1, maximum: 99 }
+    CartQuoteRequest:
+      type: object
+      required: [lines]
+      properties:
+        lines:
+          type: array
+          items: { $ref: "#/components/schemas/CartLine" }
+        coupon_code: { type: string }
+    CartQuote:
+      type: object
+      required: [currency, subtotal, discount, shipping, total, coupon_applied, coupon_valid]
+      properties:
+        currency: { type: string, enum: [NGN] }
+        subtotal: { type: integer }
+        discount: { type: integer }
+        shipping: { type: integer }
+        total: { type: integer }
+        coupon_applied:
+          type: [string, "null"]
+        coupon_valid: { type: boolean }
+    Customer:
+      type: object
+      required: [name, email, phone]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+    ShippingAddress:
+      type: object
+      required: [address, city, country]
+      properties:
+        address: { type: string }
+        city: { type: string }
+        state: { type: string }
+        postal_code: { type: string }
+        country: { type: string }
+    OrderRequest:
+      type: object
+      required: [customer, shipping, lines, payment_method]
+      properties:
+        customer: { $ref: "#/components/schemas/Customer" }
+        shipping: { $ref: "#/components/schemas/ShippingAddress" }
+        lines:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/CartLine" }
+        coupon_code: { type: string }
+        payment_method:
+          type: string
+          enum: [card, bank_transfer, mobile_money]
+    Order:
+      type: object
+      required: [id, status, customer, quote, created_at]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          enum: [pending, processing, delivered, cancelled]
+        customer: { $ref: "#/components/schemas/Customer" }
+        quote: { $ref: "#/components/schemas/CartQuote" }
+        created_at: { type: string, format: date-time }
+    BookingRequest:
+      type: object
+      required: [service_id, staff_id, date, time, customer]
+      properties:
+        service_id: { type: string }
+        staff_id: { type: string }
+        date: { type: string, format: date }
+        time: { type: string }
+        customer: { $ref: "#/components/schemas/Customer" }
+        notes: { type: string }
+    Booking:
+      type: object
+      required:
+        [id, status, service_id, service_name, price, duration_minutes, staff_id, staff_name, date, time, customer, created_at]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          enum: [confirmed, cancelled, completed]
+        service_id: { type: string }
+        service_name: { type: string }
+        price: { type: integer }
+        duration_minutes: { type: integer }
+        staff_id: { type: string }
+        staff_name: { type: string }
+        date: { type: string, format: date }
+        time: { type: string }
+        customer: { $ref: "#/components/schemas/Customer" }
+        created_at: { type: string, format: date-time }
