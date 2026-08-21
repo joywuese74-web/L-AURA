@@ -81,7 +81,7 @@ export type Customer = {
 export type ShippingAddress = {
   address: string;
   city: string;
-  state: string;
+  state?: string;
   postalCode?: string;
   country: string;
 };

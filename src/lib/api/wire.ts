@@ -62,7 +62,7 @@ export type CustomerWire = {
 export type ShippingAddressWire = {
   address: string;
   city: string;
-  state: string;
+  state?: string;
   postal_code?: string;
   country: string;
 };

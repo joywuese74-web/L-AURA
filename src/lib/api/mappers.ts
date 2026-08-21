@@ -109,7 +109,7 @@ export const fromOrderRequest = (r: OrderRequest): OrderRequestWire => ({
   shipping: {
     address: r.shipping.address,
     city: r.shipping.city,
-    state: r.shipping.state,
+    ...(r.shipping.state ? { state: r.shipping.state } : {}),
     ...(r.shipping.postalCode ? { postal_code: r.shipping.postalCode } : {}),
     country: r.shipping.country,
   },
