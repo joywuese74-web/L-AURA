@@ -1,8 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import { z } from "zod";
-import { services, serviceById, type Service } from "../lib/services";
-import { staff, staffFor, type Staff } from "../lib/staff";
+import {
+  api,
+  ApiError,
+  availabilityQuery,
+  servicesQuery,
+  staffQuery,
+  type Booking,
+  type Service,
+  type Staff,
+} from "../lib/api";
 import { formatNaira } from "../lib/currency";
 
 const searchSchema = z.object({
@@ -11,6 +20,11 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/book")({
   validateSearch: (search) => searchSchema.parse(search),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(servicesQuery()),
+      context.queryClient.ensureQueryData(staffQuery()),
+    ]),
   head: () => ({
     meta: [
       { title: "Book an Appointment — L'AURA" },
@@ -21,23 +35,6 @@ export const Route = createFileRoute("/book")({
   }),
   component: Book,
 });
-
-const STORAGE_KEY = "laura_bookings_v1";
-
-type Booking = {
-  id: string;
-  serviceId: string;
-  serviceName: string;
-  price: number;
-  staffId: string;
-  staffName: string;
-  date: string;
-  time: string;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt: string;
-};
 
 // Generate next 14 days
 function nextDays(n = 14) {
@@ -55,11 +52,12 @@ function nextDays(n = 14) {
   return days;
 }
 
-const TIMES = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
-
 function Book() {
   const { service: preselected } = Route.useSearch();
   const navigate = useNavigate();
+  const { data: services } = useSuspenseQuery(servicesQuery());
+  const { data: staff } = useSuspenseQuery(staffQuery());
+  const serviceById = (id: string) => services.find((s) => s.id === id);
 
   const [step, setStep] = useState(1);
   const [serviceId, setServiceId] = useState<string | undefined>(preselected);
@@ -71,6 +69,8 @@ function Book() {
   const [time, setTime] = useState<string | undefined>();
   const [details, setDetails] = useState({ name: "", email: "", phone: "" });
   const [confirmed, setConfirmed] = useState<Booking | null>(null);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (preselected && !serviceId) {
@@ -85,41 +85,45 @@ function Book() {
 
   const selectedService = useMemo(() => (serviceId ? serviceById(serviceId) : undefined), [serviceId]);
   const availableStaff = useMemo(
-    () => (selectedService ? staffFor(selectedService.category) : staff),
-    [selectedService],
+    () =>
+      selectedService
+        ? staff.filter((s) => s.specialties.includes(selectedService.category))
+        : staff,
+    [selectedService, staff],
   );
   const selectedStaff = useMemo(
     () => (staffId ? staff.find((s) => s.id === staffId) : undefined),
-    [staffId],
+    [staffId, staff],
   );
 
   const days = useMemo(() => nextDays(14), []);
 
-  const confirm = () => {
+  const slotsQuery = useQuery({
+    ...availabilityQuery(serviceId ?? "", date ?? "", staffId),
+    enabled: Boolean(serviceId && date),
+  });
+  const slots = slotsQuery.data ?? [];
+
+  const confirm = async () => {
     if (!selectedService || !selectedStaff || !date || !time) return;
-    const booking: Booking = {
-      id: `bk_${Date.now()}`,
-      serviceId: selectedService.id,
-      serviceName: selectedService.name,
-      price: selectedService.price,
-      staffId: selectedStaff.id,
-      staffName: selectedStaff.name,
-      date,
-      time,
-      name: details.name,
-      email: details.email,
-      phone: details.phone,
-      createdAt: new Date().toISOString(),
-    };
+    setSubmitting(true);
+    setBookingError(null);
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const list: Booking[] = raw ? JSON.parse(raw) : [];
-      list.push(booking);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch {
-      /* ignore */
+      const booking = await api.createBooking({
+        serviceId: selectedService.id,
+        staffId: selectedStaff.id,
+        date,
+        time,
+        customer: { name: details.name, email: details.email, phone: details.phone },
+      });
+      setConfirmed(booking);
+    } catch (err) {
+      setBookingError(
+        err instanceof ApiError ? err.message : "We couldn't confirm that slot. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-    setConfirmed(booking);
   };
 
   if (confirmed) {
@@ -128,7 +132,7 @@ function Book() {
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-accent">Confirmed</p>
         <h1 className="mb-6 font-serif text-5xl italic">Your seat is held.</h1>
         <p className="mb-10 text-muted-foreground">
-          A confirmation has been sent to <span className="text-foreground">{confirmed.email}</span>.
+          A confirmation has been sent to <span className="text-foreground">{confirmed.customer.email}</span>.
         </p>
         <div className="mx-auto max-w-md space-y-4 border border-border p-8 text-left">
           <Row label="Service" value={confirmed.serviceName} />
@@ -271,17 +275,21 @@ function Book() {
             <div className="mb-10">
               <p className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">Time</p>
               <div className="flex flex-wrap gap-2">
-                {TIMES.map((t) => (
+                {slots.map((slot) => (
                   <button
-                    key={t}
-                    onClick={() => setTime(t)}
-                    className={`border px-5 py-3 font-mono text-sm ${
-                      time === t ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground/40"
+                    key={slot.time}
+                    disabled={!slot.available}
+                    onClick={() => setTime(slot.time)}
+                    className={`border px-5 py-3 font-mono text-sm disabled:cursor-not-allowed disabled:line-through disabled:opacity-35 ${
+                      time === slot.time ? "border-foreground bg-foreground text-background" : "border-border hover:enabled:border-foreground/40"
                     }`}
                   >
-                    {t}
+                    {slot.time}
                   </button>
                 ))}
+                {slotsQuery.isPending && (
+                  <p className="text-xs text-muted-foreground">Checking availability…</p>
+                )}
               </div>
             </div>
           )}
@@ -355,6 +363,7 @@ function Book() {
               <Field label="Full name" value={details.name} onChange={(v) => setDetails((d) => ({ ...d, name: v }))} required />
               <Field label="Email" type="email" value={details.email} onChange={(v) => setDetails((d) => ({ ...d, email: v }))} required />
               <Field label="Phone" type="tel" value={details.phone} onChange={(v) => setDetails((d) => ({ ...d, phone: v }))} required />
+              {bookingError && <p className="text-xs text-destructive">{bookingError}</p>}
               <div className="flex items-center justify-between pt-4">
                 <button
                   type="button"
@@ -365,9 +374,10 @@ function Book() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-foreground px-8 py-3 text-[10px] uppercase tracking-widest text-background hover:bg-accent"
+                  disabled={submitting}
+                  className="bg-foreground px-8 py-3 text-[10px] uppercase tracking-widest text-background disabled:opacity-50 hover:enabled:bg-accent"
                 >
-                  Confirm Booking
+                  {submitting ? "Confirming…" : "Confirm Booking"}
                 </button>
               </div>
             </form>
