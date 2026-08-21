@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { staff } from "../lib/staff";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { staffQuery } from "../lib/api";
 
 export const Route = createFileRoute("/about")({
   head: () => ({

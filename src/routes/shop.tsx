@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { products, type Product } from "../lib/products";
+import { productsQuery, type Product } from "../lib/api";
 import { ProductCard } from "../components/product-card";
 
 export const Route = createFileRoute("/shop")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery()),
   head: () => ({
     meta: [
       { title: "Shop — L'AURA" },
@@ -25,10 +27,11 @@ const categories: (Product["category"] | "All")[] = [
 ];
 
 function Shop() {
+  const { data: products } = useSuspenseQuery(productsQuery());
   const [cat, setCat] = useState<(typeof categories)[number]>("All");
   const filtered = useMemo(
     () => (cat === "All" ? products : products.filter((p) => p.category === cat)),
-    [cat],
+    [cat, products],
   );
 
   return (
