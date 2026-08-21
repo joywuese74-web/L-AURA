@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { staffQuery } from "../lib/api";
 
 export const Route = createFileRoute("/about")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(staffQuery()),
   head: () => ({
     meta: [
       { title: "About — L'AURA" },
@@ -15,6 +16,8 @@ export const Route = createFileRoute("/about")({
 });
 
 function About() {
+  const { data: staff } = useSuspenseQuery(staffQuery());
+
   return (
     <div>
       <section className="mx-auto grid max-w-7xl grid-cols-1 gap-16 px-6 py-24 lg:grid-cols-2">

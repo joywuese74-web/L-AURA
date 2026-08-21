@@ -1,12 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { products } from "../lib/products";
-import { services, categoryMeta } from "../lib/services";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { productsQuery, servicesQuery } from "../lib/api";
+import { categoryMeta } from "../lib/services";
 import { ProductCard } from "../components/product-card";
 import galleryBraids from "../assets/gallery-braids.jpg";
 import galleryNails from "../assets/gallery-nails.jpg";
 import heroImage from "../assets/hero-portrait.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(productsQuery()),
+      context.queryClient.ensureQueryData(servicesQuery()),
+    ]),
+  head: () => ({
+    meta: [
+      { title: "L'AURA — Skincare Boutique & Beauty Atelier in Lagos" },
+      {
+        name: "description",
+        content:
+          "Shop premium skincare and reserve facials, massage, nails, and hair services at L'AURA Atelier. Naira pricing, expert specialists.",
+      },
+      { property: "og:title", content: "L'AURA — Skincare Boutique & Beauty Atelier" },
+      {
+        property: "og:description",
+        content:
+          "Premium skincare essentials and luxury salon services, bookable online.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Home,
 });
 
@@ -20,10 +44,13 @@ const galleryPreviews = [
   "https://images.unsplash.com/photo-1591019479261-1a103585c559?auto=format&fit=crop&w=800&q=80",
 ];
 
-const featured = products.slice(0, 4);
 const categoryOrder = ["Skincare", "Treatments", "Massage", "Nails", "Hair"] as const;
 
 function Home() {
+  const { data: products } = useSuspenseQuery(productsQuery());
+  const { data: services } = useSuspenseQuery(servicesQuery());
+  const featured = products.slice(0, 4);
+
   return (
     <div>
       {/* HERO */}
