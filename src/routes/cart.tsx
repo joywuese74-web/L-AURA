@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useCart } from "../lib/cart";
-import { formatNaira, FREE_SHIPPING_THRESHOLD, FLAT_SHIPPING } from "../lib/currency";
+import { quoteCart } from "../lib/api";
+import { formatNaira } from "../lib/currency";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — L'AURA" }, { name: "robots", content: "noindex" }] }),
@@ -9,17 +10,13 @@ export const Route = createFileRoute("/cart")({
 });
 
 function Cart() {
-  const { items, setQty, remove, subtotal, clear } = useCart();
-  const [coupon, setCoupon] = useState("");
-  const [applied, setApplied] = useState(0);
+  const { items, setQty, remove, clear, coupon, setCoupon } = useCart();
+  const [draftCoupon, setDraftCoupon] = useState(coupon);
 
-  const shipping = items.length === 0 ? 0 : subtotal > FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING;
-  const total = Math.max(0, subtotal - applied) + shipping;
+  // Same pure rules the backend will run server-side.
+  const quote = quoteCart(items, coupon);
 
-  const apply = () => {
-    if (coupon.trim().toUpperCase() === "AURA10") setApplied(subtotal * 0.1);
-    else setApplied(0);
-  };
+  const apply = () => setCoupon(draftCoupon);
 
   if (items.length === 0) {
     return (
@@ -81,20 +78,20 @@ function Cart() {
       <aside className="lg:col-span-1">
         <div className="border border-border p-8">
           <p className="mb-6 text-[10px] uppercase tracking-widest text-muted-foreground">Summary</p>
-          <Row label="Subtotal" value={formatNaira(subtotal)} />
-          {applied > 0 && <Row label="Discount" value={`− ${formatNaira(applied)}`} />}
-          <Row label="Shipping" value={shipping === 0 ? "Free" : formatNaira(shipping)} />
+          <Row label="Subtotal" value={formatNaira(quote.subtotal)} />
+          {quote.discount > 0 && <Row label="Discount" value={`− ${formatNaira(quote.discount)}`} />}
+          <Row label="Shipping" value={quote.shipping === 0 ? "Free" : formatNaira(quote.shipping)} />
           <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
             <span className="text-[10px] uppercase tracking-widest">Total</span>
-            <span className="font-mono text-lg">{formatNaira(total)}</span>
+            <span className="font-mono text-lg">{formatNaira(quote.total)}</span>
           </div>
 
           <div className="mt-8">
             <p className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Promo code</p>
             <div className="flex border-b border-border">
               <input
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
+                value={draftCoupon}
+                onChange={(e) => setDraftCoupon(e.target.value)}
                 placeholder="Enter code"
                 className="flex-1 bg-transparent py-2 text-sm focus:outline-none"
               />
